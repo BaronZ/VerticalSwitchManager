@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSwitchHelper = new VerticalSwitchManager<>(mLayoutRoot, new ViewSwitchAdapterImpl());
         List<String> data = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
-        mSwitchHelper.setData(data, "b");
+        mSwitchHelper.setData(data, "a");
     }
 
 

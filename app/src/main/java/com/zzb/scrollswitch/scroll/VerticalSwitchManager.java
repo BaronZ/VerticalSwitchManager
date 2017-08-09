@@ -23,7 +23,8 @@ import java.util.List;
 
 public class VerticalSwitchManager<T> {
     private static final String TAG = "VerticalSwitchManager";
-    private static final int TRANSLATE_DURATION_MS = 1000;
+    private static final int MOVE_TRANSLATE_DURATION_MS = 300;
+    private static final int RESTORE_TRANSLATE_DURATION_MS = 50;
     private final int TRIGGER_DISTANCE;
     //position(0, -H), (0,0), (0, H)
     private static final int POS_BOTTOM = 0;
@@ -46,7 +47,7 @@ public class VerticalSwitchManager<T> {
         mAdapter = adapter;
         mRootLayout = rootLayout;
         mScreenHeight = getScreenHeight();
-        TRIGGER_DISTANCE = mScreenHeight / 5;
+        TRIGGER_DISTANCE = mScreenHeight / 7;
         POSITIONS[0] = -mScreenHeight;
         POSITIONS[1] = 0;
         POSITIONS[2] = mScreenHeight;
@@ -187,7 +188,7 @@ public class VerticalSwitchManager<T> {
             item.viewY -= getScreenHeight();
             animators.add(translateAnimator(item.mView, item.viewY));
         }
-        doTranslateAnimation(animators);
+        doTranslateAnimation(animators, MOVE_TRANSLATE_DURATION_MS);
     }
 
     //遍历view然后移动
@@ -199,15 +200,19 @@ public class VerticalSwitchManager<T> {
             item.viewY += getScreenHeight();
             animators.add(translateAnimator(item.mView, item.viewY));
         }
-        doTranslateAnimation(animators);
+        doTranslateAnimation(animators, MOVE_TRANSLATE_DURATION_MS);
     }
 
     private void restoreLayout() {
         Log.d(TAG, "restoreLayout");
-        // TODO: 2017/8/8
+        List<Animator> animators = new ArrayList<>();
+        for (ScrollItem item : mItems) {
+            animators.add(translateAnimator(item.mView, item.viewY));
+        }
+        doTranslateAnimation(animators, RESTORE_TRANSLATE_DURATION_MS);
     }
 
-    private void doTranslateAnimation(List<Animator> animators) {
+    private void doTranslateAnimation(List<Animator> animators, long duration) {
         mIsInAnimation = true;
         AnimatorSet set = new AnimatorSet();
         set.addListener(new SimpleAnimatorListener() {
@@ -222,14 +227,14 @@ public class VerticalSwitchManager<T> {
             }
         });
         set.playTogether(animators);
+        set.setDuration(duration);
         set.start();
     }
 
     private Animator translateAnimator(View view, float to) {
         Log.d(TAG, "translateAnimator, to:" + to);
         return ObjectAnimator
-                .ofFloat(view, "translationY", to)
-                .setDuration(TRANSLATE_DURATION_MS);
+                .ofFloat(view, "translationY", to);
     }
 
     private float getViewYByIndex(int index) {
@@ -254,7 +259,6 @@ public class VerticalSwitchManager<T> {
         boolean moveToNext = isCallOnActionUp ? distanceY < 0 : distanceY > 0;
         if (moveToPre) {//move to pre
             if (mCenterDataPosition == 0 && getCenterItem() != null && getCenterItem().mView.getY() == 0) {
-                Log.d(TAG, "cant scroll to pre");
                 return false;
             }
         } else if (moveToNext) {//move to next
