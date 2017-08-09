@@ -214,6 +214,7 @@ public class VerticalSwitchManager<T> {
         List<Animator> animators = new ArrayList<>();
         for (ScrollItem item : mItems) {
             item.viewY -= mScreenHeight;
+            item.viewIndex--;
             animators.add(translateAnimator(item.mView, item.viewY));
         }
         doTranslateAnimation(animators, MOVE_TRANSLATE_DURATION_MS);
@@ -226,6 +227,7 @@ public class VerticalSwitchManager<T> {
         List<Animator> animators = new ArrayList<>();
         for (ScrollItem item : mItems) {
             item.viewY += mScreenHeight;
+            item.viewIndex++;
             animators.add(translateAnimator(item.mView, item.viewY));
         }
         doTranslateAnimation(animators, MOVE_TRANSLATE_DURATION_MS);
