@@ -32,7 +32,7 @@ public class VerticalSwitchManager<T> {
     private static final int POS_TOP = 2;
 
     private final float POSITIONS[] = new float[3];
-    private ViewSwitchAdapter<T> mAdapter;
+    private ViewSwitchAdapter mAdapter;
     private List<ScrollItem> mItems = new ArrayList<>();
     private GestureDetectorCompat mGestureDetector;
     private ViewGroup mRootLayout;
@@ -42,7 +42,7 @@ public class VerticalSwitchManager<T> {
     private boolean mIsInAnimation;
     private int mCenterDataPosition;
 
-    public VerticalSwitchManager(ViewGroup rootLayout, ViewSwitchAdapter<T> adapter) {
+    public VerticalSwitchManager(ViewGroup rootLayout, ViewSwitchAdapter adapter) {
         mContext = rootLayout.getContext();
         mAdapter = adapter;
         mRootLayout = rootLayout;
@@ -58,9 +58,10 @@ public class VerticalSwitchManager<T> {
     private void initViews() {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mScreenHeight);
         for (int i = 0; i < 3; i++) {
-            View view = mAdapter.createView(mRootLayout);
+            ViewSwitchAdapter.ViewHolder vh = mAdapter.createViewHolder(mRootLayout);
+            View view = vh.itemView;
             mRootLayout.addView(view, params);
-            mItems.add(new ScrollItem(view, i));
+            mItems.add(new ScrollItem(view, i, vh));
         }
     }
 
@@ -121,7 +122,7 @@ public class VerticalSwitchManager<T> {
     private void bindView(ScrollItem item, View view) {
         int itemPos = item.dataPosition;
         if (itemPos >= 0 && itemPos < mAdapter.getCount()) {
-            mAdapter.onBindView(view, item.dataPosition);
+            mAdapter.onBindView(item.viewHolder, item.dataPosition);
         } else {
             Log.d(TAG, "skip bind view, invalid position:" + itemPos);
         }

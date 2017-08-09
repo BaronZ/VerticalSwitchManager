@@ -14,20 +14,20 @@ import java.util.Random;
  * Created by ZZB on 2017/8/8.
  */
 
-public class ViewSwitchAdapterImpl extends ViewSwitchAdapter<String> {
+public class ViewSwitchAdapterImpl extends ViewSwitchAdapter<String, ViewSwitchAdapter.ViewHolder> {
 
     @Override
-    public void onBindView(View view, int pos) {
+    public void onBindView(ViewHolder viewHolder, int pos) {
         // TODO: 2017/8/8  换成holder一样，不用每次bindView都find
-        TextView tv = view.findViewById(R.id.tv_content);
+        TextView tv = viewHolder.itemView.findViewById(R.id.tv_content);
         tv.setText(getItemData(pos));
     }
 
     @Override
-    public View createView(ViewGroup parent) {
+    public ViewHolder createViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_custom, parent, false);
         view.setBackgroundColor(new Random().nextInt());
-        return view;
+        return new ViewHolder(view);
     }
 
     @Override

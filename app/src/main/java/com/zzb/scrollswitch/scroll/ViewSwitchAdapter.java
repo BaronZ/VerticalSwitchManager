@@ -9,20 +9,29 @@ import java.util.List;
  * Created by ZZB on 2017/8/7.
  */
 
-public abstract class ViewSwitchAdapter<T> {
-    protected List<T> mData;
+public abstract class ViewSwitchAdapter<DATA, VH extends ViewSwitchAdapter.ViewHolder> {
+    protected List<DATA> mData;
 
 
-    public abstract void onBindView(View view, int pos);
+    public abstract void onBindView(VH viewHolder, int pos);
 
-    public abstract View createView(ViewGroup parent);
+    public abstract VH createViewHolder(ViewGroup parent);
 
-    public abstract T getItemData(int pos);
+    public abstract DATA getItemData(int pos);
 
-    public abstract void setData(List<T> data);
+    public abstract void setData(List<DATA> data);
 
     public int getCount() {
         return mData == null ? 0 : mData.size();
+    }
+
+
+    public static class ViewHolder {
+        protected View itemView;
+
+        public ViewHolder(View itemView) {
+            this.itemView = itemView;
+        }
     }
 
 }

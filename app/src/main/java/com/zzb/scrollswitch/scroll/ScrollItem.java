@@ -13,10 +13,12 @@ public class ScrollItem<T> {
     int viewIndex;
     int dataPosition;
     float viewY;
+    ViewSwitchAdapter.ViewHolder viewHolder;
 
-    public ScrollItem(View view, int viewIndex) {
+    public ScrollItem(View view, int viewIndex, ViewSwitchAdapter.ViewHolder vh) {
         mView = view;
         this.viewIndex = viewIndex;
+        this.viewHolder = vh;
     }
 
     @Override
