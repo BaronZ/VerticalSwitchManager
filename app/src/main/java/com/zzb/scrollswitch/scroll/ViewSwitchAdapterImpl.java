@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.zzb.scrollswitch.R;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by ZZB on 2017/8/8.
@@ -24,7 +25,9 @@ public class ViewSwitchAdapterImpl extends ViewSwitchAdapter<String> {
 
     @Override
     public View createView(ViewGroup parent) {
-        return LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_custom, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_custom, parent, false);
+        view.setBackgroundColor(new Random().nextInt());
+        return view;
     }
 
     @Override

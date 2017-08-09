@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class VerticalSwitchManager<T> {
     private static final String TAG = "VerticalSwitchManager";
-    private static final int TRANSLATE_DURATION_MS = 3000;
+    private static final int TRANSLATE_DURATION_MS = 1000;
     private final int TRIGGER_DISTANCE;
     //position(0, -H), (0,0), (0, H)
     private static final int POS_BOTTOM = 0;
@@ -130,6 +131,7 @@ public class VerticalSwitchManager<T> {
         } else if (targetY == POSITIONS[POS_TOP]) {
             item.dataPosition = mCenterDataPosition + 1;
         }
+        Log.d(TAG, "updateDataPosition, centerDataPos:" + mCenterDataPosition + " updated data: " + item.toString());
     }
 
     public void onDispatchTouchEvent(MotionEvent ev) {
@@ -145,7 +147,7 @@ public class VerticalSwitchManager<T> {
     }
 
     private void onScroll(float distanceY) {
-        if (!canScroll(distanceY)) {
+        if (!canScrollOnScroll(distanceY)) {
             return;
         }
         Log.d(TAG, "onScroll, dy:" + distanceY);
@@ -165,6 +167,9 @@ public class VerticalSwitchManager<T> {
     private void onActionUp(MotionEvent ev) {
         Log.d(TAG, "onActionUp, x: " + ev.getX() + " y: " + ev.getY());
         float distanceY = ev.getY() - mStartY;
+        if (!canScrollOnActionUp(distanceY)) {
+            return;
+        }
         if (Math.abs(distanceY) < TRIGGER_DISTANCE) {
             restoreLayout();
         } else if (distanceY > 0) {
@@ -234,13 +239,34 @@ public class VerticalSwitchManager<T> {
         return POSITIONS[Math.abs(index % 3)];
     }
 
-    private boolean canScroll(float distanceY) {
+    private boolean canScrollOnScroll(float distanceY) {
+        return canScroll(distanceY, false);
+    }
+    private boolean canScrollOnActionUp(float distanceY) {
+        return canScroll(distanceY, true);
+    }
+    private boolean canScroll(float distanceY, boolean isCallOnActionUp) {
+        Log.d(TAG, "canScroll, distanceY:" + distanceY);
+        if (mAdapter.getCount() <= 1) {
+            return false;
+        }
+        boolean moveToPre = isCallOnActionUp ? distanceY > 0 : distanceY < 0;
+        boolean moveToNext = isCallOnActionUp ? distanceY < 0 : distanceY > 0;
+        if (moveToPre) {//move to pre
+            if (mCenterDataPosition == 0 && getCenterItem() != null && getCenterItem().mView.getY() == 0) {
+                Log.d(TAG, "cant scroll to pre");
+                return false;
+            }
+        } else if (moveToNext) {//move to next
+            if (mCenterDataPosition == mAdapter.getCount() - 1 && getCenterItem() != null && getCenterItem().mView.getY() == 0) {
+                return false;
+            }
+        }
         //adapter.getCount <= 1, return false
         //再判断位置，第几个，第一个不能上，最后一个不能下
         //还要再结合当前view的位置判断，比如当前view已经移动了，还是能上移的，直到恢复原位为止
         return !mIsInAnimation;
     }
-
     private int getScreenHeight() {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
         return dm.heightPixels - getStatusBarHeight();
@@ -253,5 +279,16 @@ public class VerticalSwitchManager<T> {
             result = mContext.getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    @Nullable
+    private ScrollItem getCenterItem() {
+        for (ScrollItem item : mItems) {
+            if (item.viewY == 0) {
+                Log.d(TAG, "getCenterItem: " + item);
+                return item;
+            }
+        }
+        return null;
     }
 }
