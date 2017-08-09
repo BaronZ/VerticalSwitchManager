@@ -38,7 +38,7 @@ public class VerticalSwitchManager<T> {
     private ViewGroup mRootLayout;
     private Context mContext;
     private int mScreenHeight;
-    private float mStartX, mStartY;
+    private float mStartY;
     private boolean mIsInAnimation;
     private int mCenterDataPosition;
 
@@ -188,9 +188,8 @@ public class VerticalSwitchManager<T> {
     }
 
     private void onActionDown(MotionEvent ev) {
-        mStartX = ev.getX();
         mStartY = ev.getY();
-        Log.d(TAG, "onActionDown, x: " + mStartX + " y: " + mStartY);
+        Log.d(TAG, "onActionDown, y: " + mStartY);
     }
 
     private void onActionUp(MotionEvent ev) {
