@@ -27,7 +27,7 @@ public abstract class ViewSwitchAdapter<DATA, VH extends ViewSwitchAdapter.ViewH
 
 
     public static class ViewHolder {
-        protected View itemView;
+        public final View itemView;
 
         public ViewHolder(View itemView) {
             this.itemView = itemView;

@@ -1,4 +1,4 @@
-package com.zzb.scrollswitch;
+package com.zzb.scrollswitch.demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,8 +6,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.zzb.scrollswitch.R;
 import com.zzb.scrollswitch.scroll.VerticalSwitchManager;
-import com.zzb.scrollswitch.scroll.ViewSwitchAdapterImpl;
 
 import java.util.Arrays;
 import java.util.List;

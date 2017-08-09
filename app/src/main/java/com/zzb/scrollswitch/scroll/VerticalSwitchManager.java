@@ -6,12 +6,13 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.zzb.scrollswitch.util.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class VerticalSwitchManager<T> {
         mContext = rootLayout.getContext();
         mAdapter = adapter;
         mRootLayout = rootLayout;
-        mScreenHeight = getScreenHeight();
+        mScreenHeight = ScreenUtils.getScreenHeightWithoutStatusBar(mContext);
         TRIGGER_DISTANCE = mScreenHeight / 7;
         POSITIONS[0] = -mScreenHeight;
         POSITIONS[1] = 0;
@@ -212,7 +213,7 @@ public class VerticalSwitchManager<T> {
         Log.d(TAG, "moveToNext");
         List<Animator> animators = new ArrayList<>();
         for (ScrollItem item : mItems) {
-            item.viewY -= getScreenHeight();
+            item.viewY -= mScreenHeight;
             animators.add(translateAnimator(item.mView, item.viewY));
         }
         doTranslateAnimation(animators, MOVE_TRANSLATE_DURATION_MS);
@@ -224,7 +225,7 @@ public class VerticalSwitchManager<T> {
         mCenterDataPosition--;
         List<Animator> animators = new ArrayList<>();
         for (ScrollItem item : mItems) {
-            item.viewY += getScreenHeight();
+            item.viewY += mScreenHeight;
             animators.add(translateAnimator(item.mView, item.viewY));
         }
         doTranslateAnimation(animators, MOVE_TRANSLATE_DURATION_MS);
@@ -306,19 +307,7 @@ public class VerticalSwitchManager<T> {
         return !mIsInAnimation;
     }
 
-    private int getScreenHeight() {
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        return dm.heightPixels - getStatusBarHeight();
-    }
 
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = mContext.getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
 
     @Nullable
     private ScrollItem getCenterItem() {

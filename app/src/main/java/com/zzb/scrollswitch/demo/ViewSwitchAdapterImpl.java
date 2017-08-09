@@ -1,4 +1,4 @@
-package com.zzb.scrollswitch.scroll;
+package com.zzb.scrollswitch.demo;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.zzb.scrollswitch.R;
+import com.zzb.scrollswitch.scroll.ViewSwitchAdapter;
 
 import java.util.List;
 import java.util.Random;
