@@ -152,11 +152,34 @@ public class VerticalSwitchManager<T> {
             return;
         }
         Log.d(TAG, "onScroll, dy:" + distanceY);
+        distanceY = fixDyOnFirstOrLastItemIfNeeded(distanceY);
         for (ScrollItem item : mItems) {
             View view = item.mView;
             float tY = (-distanceY + view.getY());
             view.setTranslationY(tY);
         }
+    }
+
+    //解决第一个item上滑再下滑，以及最后一个item下滑再上滑的bug
+    private float fixDyOnFirstOrLastItemIfNeeded(float distanceY) {
+        boolean moveToPre = distanceY < 0;
+        boolean moveToNext = distanceY > 0;
+        boolean isFirstItem = mCenterDataPosition == 0;
+        boolean isLastItem = mCenterDataPosition == mAdapter.getCount() - 1;
+        ScrollItem centerItem = getCenterItem();
+        if (centerItem != null) {
+            float viewY = centerItem.mView.getY();
+            if (isFirstItem && moveToPre) {
+                if (viewY - distanceY > 0) {
+                    distanceY = viewY;
+                }
+            } else if (isLastItem && moveToNext) {
+                if (viewY - distanceY < 0) {
+                    distanceY = viewY;
+                }
+            }
+        }
+        return distanceY;
     }
 
     private void onActionDown(MotionEvent ev) {
@@ -247,9 +270,11 @@ public class VerticalSwitchManager<T> {
     private boolean canScrollOnScroll(float distanceY) {
         return canScroll(distanceY, false);
     }
+
     private boolean canScrollOnActionUp(float distanceY) {
         return canScroll(distanceY, true);
     }
+
     private boolean canScroll(float distanceY, boolean isCallOnActionUp) {
         Log.d(TAG, "canScroll, distanceY:" + distanceY);
         if (mAdapter.getCount() <= 1) {
@@ -276,6 +301,7 @@ public class VerticalSwitchManager<T> {
         //还要再结合当前view的位置判断，比如当前view已经移动了，还是能上移的，直到恢复原位为止
         return !mIsInAnimation;
     }
+
     private int getScreenHeight() {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
         return dm.heightPixels - getStatusBarHeight();
