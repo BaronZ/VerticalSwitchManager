@@ -257,15 +257,20 @@ public class VerticalSwitchManager<T> {
         }
         boolean moveToPre = isCallOnActionUp ? distanceY > 0 : distanceY < 0;
         boolean moveToNext = isCallOnActionUp ? distanceY < 0 : distanceY > 0;
-        if (moveToPre) {//move to pre
-            if (mCenterDataPosition == 0 && getCenterItem() != null && getCenterItem().mView.getY() == 0) {
-                return false;
-            }
-        } else if (moveToNext) {//move to next
-            if (mCenterDataPosition == mAdapter.getCount() - 1 && getCenterItem() != null && getCenterItem().mView.getY() == 0) {
-                return false;
+        ScrollItem centerItem = getCenterItem();
+        if (centerItem != null) {
+            float centerViewY = centerItem.mView.getY();
+            if (moveToPre) {//move to pre
+                if (mCenterDataPosition == 0 && centerViewY == 0) {
+                    return false;
+                }
+            } else if (moveToNext) {//move to next
+                if (mCenterDataPosition == mAdapter.getCount() - 1 && centerViewY == 0) {
+                    return false;
+                }
             }
         }
+
         //adapter.getCount <= 1, return false
         //再判断位置，第几个，第一个不能上，最后一个不能下
         //还要再结合当前view的位置判断，比如当前view已经移动了，还是能上移的，直到恢复原位为止
