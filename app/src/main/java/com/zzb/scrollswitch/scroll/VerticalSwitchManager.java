@@ -76,6 +76,10 @@ public class VerticalSwitchManager<T> {
     }
 
     public void setData(List<T> data, T centerData) {
+        if (data == null || data.indexOf(centerData) == -1) {
+            Log.e(TAG, "setData, illegal arguments");
+            return;
+        }
         mCenterDataPosition = data.indexOf(centerData);
         mAdapter.setData(data);
         updateViewsPositionAndData(true);
